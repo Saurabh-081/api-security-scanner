@@ -24,15 +24,16 @@ This guide walks you through deploying the API Security Scanner to Render.com.
 - **Environment:** Python 3
 - **Region:** Oregon (or your preferred region)
 - **Plan:** Free or Starter (depending on your needs)
+- **Root Directory:** `backend` (set this in Render)
 
 **Build Command:**
 ```bash
-cd backend && pip install --upgrade pip && pip install -r requirements.txt
+pip install --upgrade pip && pip install -r requirements.txt
 ```
 
 **Start Command:**
 ```bash
-cd backend && gunicorn main:app --workers 1 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
+gunicorn main:app --workers 1 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
 ```
 
 **Environment Variables:**
@@ -70,13 +71,14 @@ After creation, copy the **Database URL** and use it in the backend's `DATABASE_
 - **Environment:** Node
 - **Region:** Oregon (same as backend)
 - **Node Version:** 18
+- **Root Directory:** `frontend` (set this in Render)
 
 **Build Command:**
 ```bash
-cd frontend && npm install && npm run build
+npm install && npm run build
 ```
 
-**Publish Directory:** `frontend/dist`
+**Publish Directory:** `dist`
 
 **Environment Variables:**
 | Variable | Value |
