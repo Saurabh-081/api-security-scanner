@@ -3,8 +3,7 @@ services:
     name: api-security-scanner-db
     env: docker
     plan: free
-    regions:
-      - oregon
+    region: oregon
     envVars:
       - key: POSTGRES_USER
         value: apiuser
@@ -20,10 +19,9 @@ services:
     name: api-security-scanner-backend
     env: python
     plan: free
-    regions:
-      - oregon
-    rootDir: backend
+    region: oregon
     pythonVersion: 3.11
+    rootDir: backend
     buildCommand: pip install --upgrade pip && pip install -r requirements.txt
     startCommand: gunicorn main:app --workers 1 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
     envVars:
@@ -38,28 +36,15 @@ services:
         value: "false"
       - key: BACKEND_HOST
         value: 0.0.0.0
-      - key: CORS_ORIGINS
-        value: ""
-      - key: ALGORITHM
-        value: HS256
-      - key: ACCESS_TOKEN_EXPIRE_MINUTES
-        value: "1440"
-    routes:
-      - path: /api
-        matchType: prefix
 
   - type: web
     name: api-security-scanner-frontend
     env: static
     plan: free
-    regions:
-      - oregon
+    region: oregon
     rootDir: frontend
     buildCommand: npm install && npm run build
     staticPublishPath: dist
-    envVars:
-      - key: VITE_API_URL
-        value: ""
     routes:
       - path: /
         matchType: prefix
