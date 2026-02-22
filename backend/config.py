@@ -14,9 +14,7 @@ class Settings(BaseSettings):
     All magic numbers and configuration values are defined here to avoid
     hardcoding throughout the application
     """
-    model_config = SettingsConfigDict(
-        env_file="../.env", env_file_encoding="utf-8", case_sensitive=True
-    )
+    model_config = SettingsConfigDict(case_sensitive=True)
 
     # Application metadata
     APP_NAME: str = "API Security Tester"

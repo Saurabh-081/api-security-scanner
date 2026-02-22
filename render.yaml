@@ -1,0 +1,63 @@
+services:
+  - type: pserv
+    name: api-security-scanner-db
+    env: docker
+    plan: free
+    regions:
+      - oregon
+    envVars:
+      - key: POSTGRES_USER
+        value: apiuser
+      - key: POSTGRES_PASSWORD
+        generateValue: true
+      - key: POSTGRES_DB
+        value: apisecurity
+    disk:
+      mountPath: /var/lib/postgresql/data
+      sizeGB: 1
+
+  - type: web
+    name: api-security-scanner-backend
+    env: python
+    plan: free
+    regions:
+      - oregon
+    pythonVersion: 3.11
+    buildCommand: cd backend && pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: cd backend && gunicorn main:app --workers 1 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
+    envVars:
+      - key: DATABASE_URL
+        fromService:
+          type: pserv
+          name: api-security-scanner-db
+          property: databaseURL
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "false"
+      - key: BACKEND_HOST
+        value: 0.0.0.0
+      - key: CORS_ORIGINS
+        value: ""
+      - key: ALGORITHM
+        value: HS256
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "1440"
+    routes:
+      - path: /api
+        matchType: prefix
+
+  - type: web
+    name: api-security-scanner-frontend
+    env: static
+    plan: free
+    regions:
+      - oregon
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: frontend/dist
+    envVars:
+      - key: VITE_API_URL
+        value: ""
+    routes:
+      - path: /
+        matchType: prefix
